@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Prepare covariates</title>
+<title>Preparing Tick Data - 2&nbsp; Prepare covariates</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -120,6 +120,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Preparing Tick Data</a> 
+    </div>
+      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -160,7 +165,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#elevation" id="toc-elevation" class="nav-link" data-scroll-target="#elevation"><span class="header-section-number">2.3</span> Elevation</a></li>
   <li><a href="#weather" id="toc-weather" class="nav-link" data-scroll-target="#weather"><span class="header-section-number">2.4</span> Weather</a></li>
   <li><a href="#forest-mix" id="toc-forest-mix" class="nav-link" data-scroll-target="#forest-mix"><span class="header-section-number">2.5</span> Forest mix</a></li>
-  <li><a href="#vegetation-height" id="toc-vegetation-height" class="nav-link" data-scroll-target="#vegetation-height"><span class="header-section-number">2.6</span> Vegetation Height</a></li>
   </ul>
 </nav>
     </div>
@@ -194,6 +198,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="mask" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="mask"><span class="header-section-number">2.1</span> Mask</h2>
+<p>Creating a raster to mask our results with (specifies resolution, extent and valid cell (no lakes))</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>swissBOUNDARIES3D</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description</strong></td>
+<td>Administrative boundaries</td>
+</tr>
+<tr class="even">
+<td><strong>Source</strong></td>
+<td>Bundesamt für Landestopographie, swisstopo<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>swissTLMRegio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description</strong></td>
+<td>medium res., vector based landscape model</td>
+</tr>
+<tr class="even">
+<td><strong>Source</strong></td>
+<td>Bundesamt für Landestopographie, swisstopo<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></td>
+</tr>
+</tbody>
+</table>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>swisstlm_temp_path <span class="ot">&lt;-</span> <span class="st">"data-temp/swissTLM/"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="st">"data-raw/public/swissTLM/swisstlmregio_2022_2056.gdb.zip"</span>, <span class="at">exdir =</span> swisstlm_temp_path)</span>
@@ -224,6 +265,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="population" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="population"><span class="header-section-number">2.2</span> Population</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description</strong></td>
+<td>Population count and denisity</td>
+</tr>
+<tr class="even">
+<td><strong>Source</strong></td>
+<td>Bundesamt für Stastistik<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></td>
+</tr>
+</tbody>
+</table>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>zips <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data-raw/public/Population/"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -276,33 +335,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="elevation" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="elevation"><span class="header-section-number">2.3</span> Elevation</h2>
-<ul>
-<li>dataset: <code>./data/prepared/DHM/DHM25.tif</code> (CRS: <code>EPSG: 21781</code>)</li>
-</ul>
-<p>Temperature has a big impact on the occurance of ticks. The mentioned expert based model used elevation as a proxy for temperature and removed risk classes based according to the following system:</p>
 <table class="table">
 <thead>
 <tr class="header">
+<th>Dataset</th>
 <th>Elevation</th>
-<th>Classification</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>1200 - 1600</td>
-<td>minus 1 class</td>
+<td><strong>Description</strong></td>
+<td>Digital Elevation Model (DEM) with 25m resolution</td>
 </tr>
 <tr class="even">
-<td>1600 - 1900</td>
-<td>minus 2 classes</td>
-</tr>
-<tr class="odd">
-<td>&gt; 1900</td>
-<td>0</td>
+<td><strong>Source</strong></td>
+<td>Bundesamt für Landestopographie, swisstopo<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></td>
 </tr>
 </tbody>
 </table>
-<p>The <a href="https://www.swisstopo.admin.ch/en/geodata/height/dhm25.html">Digital height model DHM25</a> is a dataset with 25 m resolution describing elevation.</p>
 <div class="cell">
 <details>
 <summary>data preperation</summary>
@@ -327,19 +377,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="weather" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="weather"><span class="header-section-number">2.4</span> Weather</h2>
-<ul>
-<li>Dataset: <code>prepared/Weather</code></li>
-<li>Variables:
-<ul>
-<li>RhiresM: Monthly precipitation</li>
-<li>SrelM: Monthly relative sunshine duration</li>
-<li>TabsM: Monthly mean temperature</li>
-</ul></li>
-</ul>
-<p>These variables (or a combination of them) raised or lowered the risk class according to the following system:</p>
-<p>We have prepared some weather data from the <a href="https://www.meteoswiss.admin.ch/">Federal Office of Meteorology and Climatology MeteoSwiss</a> (Meteo Schweiz). We will provide you with the following datasets (years 2015 - 2021):</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Elevation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description</strong></td>
+<td>Different climate datasets (percipitation, sunshine, temperature…)</td>
+</tr>
+<tr class="even">
+<td><strong>Source</strong></td>
+<td>Meteoswiss<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> (not publicly available)</td>
+</tr>
+</tbody>
+</table>
+<p>Variables: - RhiresM: Monthly precipitation - SrelM: Monthly relative sunshine duration - TabsM: Monthly mean temperature</p>
 <p>A full list of the available variables can be found <a href="https://www.meteoschweiz.admin.ch/dam/jcr:215c313a-dc13-4b67-bca0-dbd966597f9a/ProdDoc_Cover-dfie.pdf">here</a>.</p>
-<p>This is how we prepared the data:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>files_monthly <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"RhiresM_61_21_ch01r.swiss.lv95.zip"</span>, <span class="st">"SrelM_71_21_ch01r.swiss.lv95.zip"</span>, <span class="st">"TabsM_61_21_ch01r.swiss.lv95.zip"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -410,7 +467,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="forest-mix" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="forest-mix"><span class="header-section-number">2.5</span> Forest mix</h2>
-<p>Percentage of “Laubbaumholz” (deciduous trees) in a 10m grid. The dataset is provided by the <a href="https://map.geo.admin.ch/?lang=de&amp;topic=ech&amp;bgLayer=ch.swisstopo.pixelkarte-farbe&amp;layers=ch.bafu.landesforstinventar-waldmischungsgrad&amp;layers_opacity=0.5&amp;E=2649824.25&amp;N=1226629.34&amp;zoom=10">Federal Office for the Environment</a>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Forest Mix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description</strong></td>
+<td>Percentage of “Laubbaumholz” (deciduous trees) in a 10m raster</td>
+</tr>
+<tr class="even">
+<td><strong>Source</strong></td>
+<td>Bafu<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></td>
+</tr>
+</tbody>
+</table>
 <p>This dataset is also the basis of the dataset <a href="https://www.envidat.ch/dataset/forest-type-nfi">Forest Type</a> which discriminates forest type into two classes based on the percentage of deciduous trees.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>forest_mix_path <span class="ot">&lt;-</span> <span class="st">"data-raw/public/Forest/Waldmischungsgrad_2018_10m_2056.tif"</span></span>
@@ -431,12 +505,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>[1] "Waldmischungsgrad_2018_10m_2056.tif"</code></pre>
 </div>
 </div>
+
+
 </section>
-<section id="vegetation-height" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="vegetation-height"><span class="header-section-number">2.6</span> Vegetation Height</h2>
-<p>location: <code>ftp://ftp.wsl.ch/pub/ginzler/VHM_LFI</code> (user: <code>anonymous</code>)</p>
-
-
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://www.swisstopo.admin.ch/en/geodata/landscape/boundaries3d.html" class="uri">https://www.swisstopo.admin.ch/en/geodata/landscape/boundaries3d.html</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://www.swisstopo.admin.ch/en/geodata/landscape/tlmregio.htm" class="uri">https://www.swisstopo.admin.ch/en/geodata/landscape/tlmregio.htm</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://www.bfs.admin.ch/bfs/de/home/dienstleistungen/geostat/geodaten-bundesstatistik/gebaeude-wohnungen-haushalte-personen/bevoelkerung-haushalte-ab-2010.html" class="uri">https://www.bfs.admin.ch/bfs/de/home/dienstleistungen/geostat/geodaten-bundesstatistik/gebaeude-wohnungen-haushalte-personen/bevoelkerung-haushalte-ab-2010.html</a>: Scroll to the bottom and click on the “Geodata” Tab<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://www.swisstopo.admin.ch/en/geodata/height/dhm25.html" class="uri">https://www.swisstopo.admin.ch/en/geodata/height/dhm25.html</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://www.meteoschweiz.admin.ch/klima/klimawandel/entwicklung-temperatur-niederschlag-sonnenschein/monats-und-jahresgitterkarten.html" class="uri">https://www.meteoschweiz.admin.ch/klima/klimawandel/entwicklung-temperatur-niederschlag-sonnenschein/monats-und-jahresgitterkarten.html</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a href="https://map.geo.admin.ch/?lang=de&amp;topic=ech&amp;bgLayer=ch.swisstopo.pixelkarte-farbe&amp;layers=ch.bafu.landesforstinventar-waldmischungsgrad&amp;layers_opacity=0.5&amp;E=2649824.25&amp;N=1226629.34&amp;zoom=10" class="uri">https://map.geo.admin.ch/?lang=de&amp;topic=ech&amp;bgLayer=ch.swisstopo.pixelkarte-farbe&amp;layers=ch.bafu.landesforstinventar-waldmischungsgrad&amp;layers_opacity=0.5&amp;E=2649824.25&amp;N=1226629.34&amp;zoom=10</a><a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
