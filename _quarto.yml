@@ -1,0 +1,21 @@
+project:
+  type: book
+
+freeze: true
+
+execute: 
+  error: true
+
+book:
+  author: "Nils Ratnaweera"
+  date: "11/3/2023"
+  chapters:
+    - index.qmd
+    - 01_Clean_reports.qmd
+    - 02_Prepare_covariates.qmd
+
+format:
+  html:
+    theme: cosmo
+
+
