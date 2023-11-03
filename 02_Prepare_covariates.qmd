@@ -2,6 +2,7 @@
 
 # Prepare covariates
 
+
 ```{r}
 #| message: false
 #| warning: false
@@ -14,6 +15,27 @@ library("readr")
 ```
 
 ## Mask
+
+Creating a raster to mask our results with (specifies resolution, extent and valid cell (no lakes))
+
+
+
+
+
+| Dataset         | swissBOUNDARIES3D                                                                  |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | Administrative boundaries                                                          |
+| **Source**      | Bundesamt für Landestopographie, swisstopo[^swissBOUNDARIES3D]                     |
+
+[^swissBOUNDARIES3D]: <https://www.swisstopo.admin.ch/en/geodata/landscape/boundaries3d.html>
+
+| Dataset         | swissTLMRegio                                                                      |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | medium res., vector based landscape model                                          |
+| **Source**      | Bundesamt für Landestopographie, swisstopo[^swisstlmregio]                         |
+
+[^swisstlmregio]: <https://www.swisstopo.admin.ch/en/geodata/landscape/tlmregio.htm>
+
 
 ```{r}
 
@@ -47,6 +69,14 @@ writeRaster(switzerland_mask, file.path(mask_path, "Mask.tif"), datatype = "INT1
 
 
 ## Population
+
+| Dataset         | Population                                                                         |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | Population count and denisity                                                      |
+| **Source**      | Bundesamt für Stastistik[^population]                                              |
+
+[^population]: <https://www.bfs.admin.ch/bfs/de/home/dienstleistungen/geostat/geodaten-bundesstatistik/gebaeude-wohnungen-haushalte-personen/bevoelkerung-haushalte-ab-2010.html>: Scroll to the bottom and click on the "Geodata" Tab
+
 
 
 ```{r}
@@ -104,18 +134,15 @@ writeRaster(population, file.path(population_path2, "Population_2015-2021.tif"))
 ## Elevation
 
 
-- dataset: `./data/prepared/DHM/DHM25.tif` (CRS: `EPSG: 21781`)
+| Dataset         | Elevation                                                                          |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | Digital Elevation Model (DEM) with 25m resolution                                  |
+| **Source**      | Bundesamt für Landestopographie, swisstopo[^Elevation]                             |
 
 
-Temperature has a big impact on the occurance of ticks. The mentioned expert based model used elevation as a proxy for temperature and removed risk classes based according to the following system:
+[^Elevation]: <https://www.swisstopo.admin.ch/en/geodata/height/dhm25.html>
 
-| Elevation   | Classification  |
-|-------------|-----------------|
-| 1200 - 1600 | minus 1 class   |
-| 1600 - 1900 | minus 2 classes |
-| > 1900      | 0               |
 
-The [Digital height model DHM25](https://www.swisstopo.admin.ch/en/geodata/height/dhm25.html) is a dataset with 25 m resolution describing elevation.
 
 
 ```{r}
@@ -149,20 +176,20 @@ writeRaster(dhm25_2056, file.path(dhm_path2, "DHM25_2056.tif"))
 
 ## Weather
 
-- Dataset: `prepared/Weather` 
-- Variables: 
+
+| Dataset         | Elevation                                                                          |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | Different climate datasets (percipitation, sunshine, temperature...)               |
+| **Source**      | Meteoswiss[^Weather] (not publicly available)                                      |
+
+[^Weather]: <https://www.meteoschweiz.admin.ch/klima/klimawandel/entwicklung-temperatur-niederschlag-sonnenschein/monats-und-jahresgitterkarten.html>
+
+Variables: 
   - RhiresM: Monthly precipitation
   - SrelM: Monthly relative sunshine duration
   - TabsM: Monthly mean temperature
 
-These variables (or a combination of them) raised or lowered the risk class according to the following system:
-
-We have prepared some weather data from the [Federal Office of Meteorology and Climatology MeteoSwiss](https://www.meteoswiss.admin.ch/) (Meteo Schweiz). We will provide you with the following datasets (years 2015 - 2021):
-
 A full list of the available variables can be found [here](https://www.meteoschweiz.admin.ch/dam/jcr:215c313a-dc13-4b67-bca0-dbd966597f9a/ProdDoc_Cover-dfie.pdf).
-
-
-This is how we prepared the data:
 
 
 
@@ -252,9 +279,16 @@ mean(rhires_2015) |>
 ## Forest mix
 
 
-Percentage of "Laubbaumholz" (deciduous trees) in a 10m grid. The dataset is provided by the [Federal Office for the Environment](https://map.geo.admin.ch/?lang=de&topic=ech&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bafu.landesforstinventar-waldmischungsgrad&layers_opacity=0.5&E=2649824.25&N=1226629.34&zoom=10).
+| Dataset         | Forest Mix                                                                         |
+|-----------------|------------------------------------------------------------------------------------|
+| **Description** | Percentage of "Laubbaumholz" (deciduous trees) in a 10m raster                     |
+| **Source**      | Bafu[^forestmix]                                                                   |
 
 This dataset is also the basis of the dataset [Forest Type](https://www.envidat.ch/dataset/forest-type-nfi) which discriminates forest type into two classes based on the percentage of deciduous trees.
+
+
+[^forestmix]: <https://map.geo.admin.ch/?lang=de&topic=ech&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bafu.landesforstinventar-waldmischungsgrad&layers_opacity=0.5&E=2649824.25&N=1226629.34&zoom=10>
+
 
 
 ```{r}
@@ -272,8 +306,4 @@ basename(forest_mix_path)
 ```
 
 
-
-## Vegetation Height
-
-location: `ftp://ftp.wsl.ch/pub/ginzler/VHM_LFI` (user: `anonymous`)
 

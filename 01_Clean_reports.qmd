@@ -1,5 +1,7 @@
 
-## Prepare Ticks data
+## Prepare Ticks data {#test}
+
+The tick data is user generated with the TickApp, see @sec-abstract \nameref{test}.
 
 ```{r}
 #| message: false
@@ -15,6 +17,11 @@ library("janitor")
 library("lubridate")
 
 options("sf_max.plot" = 1)
+
+```
+
+```{r}
+
 
 tick_reports <- read_csv("data-raw/classified/tick-reports.csv")
 swissboundaries_path <- "data-raw/public/swissTLM/swissBOUNDARIES3D_1_4_LV95_LN02.gdb"
@@ -36,6 +43,12 @@ tick_reports <- tick_reports |>
     date = as.Date(datetime)
   )
 
+
+
+
+```
+
+```{r}
 # remove rows without a data or data is older than 2015
 tick_reports <- tick_reports |>
   filter(!is.na(date)) |>
@@ -63,6 +76,9 @@ tick_reports <- tick_reports %>%
 # till now, all steps are relatively straightforward. Now, opinions start to
 # matter.
 
+```
+
+```{r}
 
 # remove reports with a spatial accuracy of more than 1 km radius
 tick_reports <- tick_reports |>
@@ -94,7 +110,9 @@ table(tick_reports$date_acc)
 tick_reports <- tick_reports |>
   filter(date_acc < 50000)
 
+```
 
+```{r}
 tick_reports$date_acc <- NULL
 tick_reports$body_part <- NULL
 tick_reports$report_type <- NULL
@@ -105,7 +123,9 @@ tick_reports$pickup <- NULL
 tick_reports$uuid <- NULL
 tick_reports$comment <- NULL
 tick_reports$deleted <- NULL
+```
 
+```{r}
 
 # some reports are obivously duplicates: same x and y and date (time may vary slighly)
 tick_reports |>
@@ -136,13 +156,15 @@ ggplot(tick_reports_sf) +
   geom_sf() +
   facet_wrap(~year)
 
+```
 
+```{r}
 tick_reports_sf$year <- NULL
 
 ticks_path <- "data-processed/Ticks"
 
 if(!dir.exists(ticks_path)) {dir.create(ticks_path)}
 
-st_write(tick_reports_sf, file.path(ticks_path, "tick_reports.gpkg"), "reports_0.2")
+st_write(tick_reports_sf, file.path(ticks_path, "tick_reports.gpkg"), "reports_0.1", overwrite = TRUE)
 
 ```
