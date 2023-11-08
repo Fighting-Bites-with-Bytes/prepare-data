@@ -3,7 +3,37 @@
 
 We would like have a simple way to share data and code. Therefore, we use the following structure:
 
-The whole project is synced via NextCloud, with the exception of a folder named `github-repo` (this folder is manually removed from any synchronization with the NextCloud client). The content of this folder is this very repository.
+The whole project is synced via NextCloud, with the exception of a folder named `github-repo` (this folder is manually removed from any synchronization with the NextCloud client). The content of this folder is this very repository. `tree .. -L 2` gives the following structure:
+
+
+
+```
+..
+├── data-processed
+│   ├── DHM
+│   ├── Forest
+│   ├── Mask
+│   ├── Population
+│   ├── Ticks
+│   └── Weather
+├── data-raw
+│   ├── classified
+│   ├── internal
+│   └── public
+├── data-temp
+│   ├── DHM
+│   ├── Population
+│   ├── swissTLM
+│   └── Weather
+└── git_repo
+    ├── 01_Clean_reports.qmd
+    ├── 02_Prepare_covariates.qmd
+    ├── _freeze
+    ├── images
+    ├── index.qmd
+    ├── _quarto.yml
+    └── Readme.md
+```
 
 
 
