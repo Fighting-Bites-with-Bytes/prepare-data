@@ -23,8 +23,8 @@ options("sf_max.plot" = 1)
 ```{r}
 
 
-tick_reports <- read_csv("data-raw/classified/tick-reports.csv")
-swissboundaries_path <- "data-raw/public/swissTLM/swissBOUNDARIES3D_1_4_LV95_LN02.gdb"
+tick_reports <- read_csv("../data-raw/classified/tick_reports.csv")
+swissboundaries_path <- "../data-raw/public/swissTLM/swissBOUNDARIES3D_1_4_LV95_LN02.gdb"
 # st_layers(swissboundaries_path)
 
 switzerland <- read_sf(swissboundaries_path, "TLM_LANDESGEBIET") |>
@@ -36,7 +36,7 @@ switzerland <- read_sf(swissboundaries_path, "TLM_LANDESGEBIET") |>
 # clean column names and format columns
 tick_reports <- tick_reports |>
   janitor::clean_names() |>
-  mutate(across(c(id, x, y, acc, body_part, report_type, age, gender, host, pickup, deleted), ~ as.integer(.x))) |>
+  mutate(across(c(id, x, y, acc), ~ as.integer(.x))) |>
   mutate(across(c(lat, lon, date_acc), ~ as.numeric(.x))) |>
   mutate(
     datetime = as.POSIXct(date, format = "%Y-%m-%d %H:%M:%S"),
@@ -49,32 +49,6 @@ tick_reports <- tick_reports |>
 ```
 
 ```{r}
-# remove rows without a data or data is older than 2015
-tick_reports <- tick_reports |>
-  filter(!is.na(date)) |>
-  filter(date > "2015-01-01")
-
-
-
-# remove reports outside a oversized bounding box
-# This is redundant, as the data will be filtered by swissBOUNDARIES3D later
-XMIN_21781 <- 485000
-XMAX_21781 <- 834000
-YMAX_21781 <- 296000
-YMIN_21781 <- 075000
-
-tick_reports <- tick_reports %>%
-  filter(x < XMAX_21781, x > XMIN_21781) %>%
-  filter(y < YMAX_21781, y > YMIN_21781)
-
-# remove reports without a uuid or reports that are marked as deleted
-tick_reports <- tick_reports %>%
-  filter(uuid != "") %>%
-  filter(deleted != 1)
-
-
-# till now, all steps are relatively straightforward. Now, opinions start to
-# matter.
 
 ```
 
@@ -112,18 +86,7 @@ tick_reports <- tick_reports |>
 
 ```
 
-```{r}
-tick_reports$date_acc <- NULL
-tick_reports$body_part <- NULL
-tick_reports$report_type <- NULL
-tick_reports$age <- NULL
-tick_reports$gender <- NULL
-tick_reports$host <- NULL
-tick_reports$pickup <- NULL
-tick_reports$uuid <- NULL
-tick_reports$comment <- NULL
-tick_reports$deleted <- NULL
-```
+
 
 ```{r}
 
@@ -161,10 +124,10 @@ ggplot(tick_reports_sf) +
 ```{r}
 tick_reports_sf$year <- NULL
 
-ticks_path <- "data-processed/Ticks"
+ticks_path <- "../data-processed/Ticks"
 
 if(!dir.exists(ticks_path)) {dir.create(ticks_path)}
 
-st_write(tick_reports_sf, file.path(ticks_path, "tick_reports.gpkg"), "reports_0.1", overwrite = TRUE)
+st_write(tick_reports_sf, file.path(ticks_path, "tick_reports.gpkg"), "reports_0.1", append = FALSE)
 
 ```

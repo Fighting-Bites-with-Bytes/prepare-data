@@ -1,4 +1,11 @@
 
+## Organization Github / Nextcloud
+
+We would like have a simple way to share data and code. Therefore, we use the following structure:
+
+The whole project is synced via NextCloud, with the exception of a folder named `github-repo` (this folder is manually removed from any synchronization with the NextCloud client). The content of this folder is this very repository.
+
+
 
 ## Data Portals in Switzerland
 
